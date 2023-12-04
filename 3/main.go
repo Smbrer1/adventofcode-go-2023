@@ -25,12 +25,33 @@ func parse(text string, row int) {
 			num, _ := strconv.Atoi(number)
 			intMap[tempCords] = num
 			number = ""
+			isFound = false
+		}
+		if val != '.' && !unicode.IsDigit(val) {
+			symbolList = append(symbolList, [2]int{row, ind})
 		}
 	}
 }
 
-func first(text string) int {
-	return 0
+func first() int {
+	ans := 0
+	for _, i := range symbolList {
+		for k := -1; k < 2; k++ {
+			for j := -3; j < 3; j++ {
+				for h := -3; h < 3; h++ {
+					cords := [3]int{i[1] + h, i[1] + j, i[0] + k}
+					elem, ok := intMap[cords]
+					fmt.Println(cords)
+					if ok {
+						delete(intMap, cords)
+						fmt.Println(elem)
+						ans += elem
+					}
+				}
+			}
+		}
+	}
+	return ans
 }
 
 // get all number start/end index and row number in something like map
@@ -52,12 +73,16 @@ func main() {
 
 	sc := bufio.NewScanner(data)
 	i := 0
+	ans := 0
 	for sc.Scan() {
 		t := sc.Text()
 		parse(t, i)
 
 		i++
 
+		ans += first()
 	}
 	fmt.Println(intMap)
+	fmt.Println(symbolList)
+	fmt.Println(ans)
 }
